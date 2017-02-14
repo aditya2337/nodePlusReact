@@ -1,14 +1,35 @@
 const express = require('express');
 const session = require('express-session');
+const passport = require('passport');
+const bodyParser = require('body-parser');
+const db = require('./db');
+require('./passport');
 
 express()
+  .use(bodyParser.json())
+  .use(bodyParser.urlencoded({extended: false}))
   .use(session({ secret: 'i love dogs', resave: false, saveUninitialized: false }))
+  .use(passport.initialize())
+  .use(passport.session())
   .get('/', (req, res, next) => {
-    res.send(req.session);
+    res.json({
+      session: req.session,
+      user: req.user,
+      authenticated: req.isAuthenticated()
+    });
   })
-  .get('/set', (req, res, next) => {
-    req.session.name = 'aditya';
-    res.send(req.session);
+  .get('/login', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.json({name: 'login again'});
   })
-  .listen(3000)
+  .post('/login', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+  }, passport.authenticate('local', {
+    successRedirect: '/',
+    failureRedirect: '/login'
+  }))
+  .listen(3001)
 ;

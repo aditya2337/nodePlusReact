@@ -28,23 +28,6 @@ express()
         tweets});
     });
   })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   .get('/users', (req, res, next) => {
     mongo.db.collection('nodeUsers')
     .find()
