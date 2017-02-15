@@ -17,7 +17,7 @@ export default class Login extends Component {
       .then(blob => blob.json())
       .then(res => {
         if (!res.authenticated) {
-          this.setState({isLoggedIn: false}); 
+          this.setState({isLoggedIn: false});
         }
         console.log(res);
       });
@@ -32,8 +32,8 @@ export default class Login extends Component {
     })
       .then(blob => blob.json())
       .then(res => {
-        if (res.authenticated) {
-          this.setState({isLoggedIn: true});
+        if (!res.authenticated) {
+          this.setState({isLoggedIn: false});
         }
         console.log(res);
       });
@@ -44,7 +44,6 @@ export default class Login extends Component {
 
     if (isLoggedIn) {
       return (<p>Welcome</p>);
-
     } else {
       return (
         <form onSubmit={this.onFormSubmit}>
