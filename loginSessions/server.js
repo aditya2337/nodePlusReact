@@ -38,5 +38,14 @@ express()
     successRedirect: '/',
     failureRedirect: '/login'
   }))
+  .get('/logout', (req, res, next) => {
+    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    req.session.destroy((err) => {
+      if (err) res.sendStatus(400);
+      res.redirect('/');
+    });
+  })
   .listen(3001)
 ;

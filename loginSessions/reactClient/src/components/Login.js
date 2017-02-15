@@ -4,23 +4,43 @@ export default class Login extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      isLoggedIn: true
+      isLoggedIn: false,
+      firstName: null
     };
     this.onFormSubmit = this.onFormSubmit.bind(this);
+    this.handleLogout = this.handleLogout.bind(this);
   }
 
-  componentWillMount () {
+  componentDidMount () {
     fetch(`http://localhost:3001`, {
       method: 'GET',
       credentials: 'include'
     })
       .then(blob => blob.json())
       .then(res => {
-        if (!res.authenticated) {
-          this.setState({isLoggedIn: false});
+        if (res.authenticated) {
+          this.setState({
+            isLoggedIn: true,
+            firstName: res.user[0].first_name
+          });
         }
-        console.log(res);
       });
+  }
+
+  handleLogout (e) {
+    e.preventDefault();
+    fetch(`http://localhost:3001/logout`, {
+      method: 'GET',
+      credentials: 'include'
+    })
+    .then(blob => blob.json())
+    .then(res => {
+      if (!res.authenticated) {
+        this.setState({
+          isLoggedIn: false
+        });
+      }
+    });
   }
 
   onFormSubmit (e) {
@@ -32,20 +52,27 @@ export default class Login extends Component {
     })
       .then(blob => blob.json())
       .then(res => {
-        if (!res.authenticated) {
-          this.setState({isLoggedIn: false});
+        if (res.authenticated) {
+          this.setState({
+            isLoggedIn: true,
+            firstName: res.user[0].first_name
+          });
         }
-        console.log(res);
       });
   }
 
   render () {
-    const {isLoggedIn} = this.state;
-
+    const {isLoggedIn, firstName} = this.state;
+    let button = null;
     if (isLoggedIn) {
-      return (<p>Welcome</p>);
+      button = (
+        <div>
+          <p>Welcome {firstName}!</p>
+          <button onClick={this.handleLogout}>Logout</button>
+        </div>
+      );
     } else {
-      return (
+      button = (
         <form onSubmit={this.onFormSubmit}>
           <div>
             <label>Email:</label>
@@ -58,8 +85,12 @@ export default class Login extends Component {
           <div>
             <input type='submit' value='Log In' />
           </div>
-        </form>
-      );
+        </form>);
     }
+    return (
+      <div>
+        {button}
+      </div>
+    );
   }
 }

@@ -17,11 +17,9 @@ function authenticate (email, password, done) {
 
 passport.serializeUser((user, done) => {
   done(null, user[0]._id);
-  console.log(user);
 });
 
 passport.deserializeUser((id, done) => {
-  console.log(id);
   mongo.db.collection('users').find({_id: ObjectId(id)}).toArray((err, user) => {
     if (err) return done(null, false, {message: err});
     done(null, user);
